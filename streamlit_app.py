@@ -15,6 +15,19 @@ forums](https://discuss.streamlit.io).
 In the meantime, below is an example of what you can do with just a few lines of code:
 """
 
+option = st.selectbox(
+     'Year',
+     ('2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'))
+option = st.selectbox(
+     'Model',
+     ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
+option = st.selectbox(
+     'Make',
+     ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
+title = st.text_input('Mileage', 'miles')
+title = st.text_input('Zip code', '#####')
+st.button('Get price')
+
 
 with st.echo(code_location='below'):
     total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
