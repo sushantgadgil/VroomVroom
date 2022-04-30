@@ -30,9 +30,13 @@ In the meantime, below is an example of what you can do with just a few lines of
 
 path = '/app/vroomvroom/Dataset/used_cars_dataset_trimmed.csv'
 
-path
+#For Sushant's Testing Only
+
+localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv'
 
 df = pd.read_csv(path) #Read in CSV
+
+st.write(df.shape[0])
 
 makes = df["make_name"]
 
@@ -129,8 +133,8 @@ testing = 1
 
 #API Keys
 
-API_Key = st.secrets("API_Key")
-CX = st.secrets("CX")
+API_Key = st.secrets["API_Key"]
+CX = st.secrets["CX"]
 num = "1"
 
 #Build Google Image Search Query
