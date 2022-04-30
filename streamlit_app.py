@@ -8,6 +8,7 @@ import geopy as gp
 import geopy.distance as gpd
 import requests
 from geopy.geocoders import Nominatim
+import gdown
 
 st.set_page_config(
      page_title="VroomVroom",
@@ -28,13 +29,23 @@ In the meantime, below is an example of what you can do with just a few lines of
 
 #Import CSV and Prepare For Display
 
-path = '/app/vroomvroom/Dataset/used_cars_dataset_trimmed.csv'
+
+gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
+gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
+
+@st.cache(persist=True)
+def download(path):
+    gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
+    df = pd.read_csv('used_cars_dataset_trimmed.csv')
+    return df
+
+df = download(gDrivepath)
+
 
 #For Sushant's Testing Only
 
-localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv'
-
-df = pd.read_csv(path) #Read in CSV
+# localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv'
+# df = pd.read_csv(localPath) #Read in CSV
 
 st.write(df.shape[0])
 
