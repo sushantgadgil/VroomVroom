@@ -26,21 +26,23 @@ st.set_page_config(
 
 left_column, middle_column, right_column = st.columns(3)
 with left_column:
-    option = st.selectbox(
+    year = st.selectbox(
         'Year',
         ('2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'))
-    title = st.text_input('Mileage', 'miles')
+    mileage = st.text_input('Mileage', 'miles')
 
 with middle_column:
-    option = st.selectbox(
+    model = st.selectbox(
         'Model',
         ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
-    title = st.text_input('Zip code', '#####')
+    zipCode = st.text_input('Zip code', '#####')
 
 with right_column:
-    option = st.selectbox(
+    make = st.selectbox(
          'Make',
         ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
+
+
 
 right_column.button('Confirm!')
 
