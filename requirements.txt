@@ -7,6 +7,5 @@ numpy
 scipy
 kaggle
 geopy
-time
 requests
 collections
