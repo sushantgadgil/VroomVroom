@@ -28,7 +28,7 @@ In the meantime, below is an example of what you can do with just a few lines of
 
 #Import CSV and Prepare For Display
 
-df = pd.read_csv("~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv") #Read in CSV
+df = pd.read_csv("/Dataset/used_cars_dataset_trimmed.csv") #Read in CSV
 
 makes = df["make_name"]
 
