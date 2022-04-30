@@ -5,4 +5,4 @@ scikit-learn
 seaborn
 numpy 
 scipy
-pip install geopy
+geopy
