@@ -3,6 +3,7 @@ import altair as alt
 import math
 import pandas as pd
 import streamlit as st
+import time 
 
 """
 # Welcome to Streamlit!
@@ -15,18 +16,32 @@ forums](https://discuss.streamlit.io).
 In the meantime, below is an example of what you can do with just a few lines of code:
 """
 
-option = st.selectbox(
-     'Year',
-     ('2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'))
-option = st.selectbox(
-     'Model',
-     ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
-option = st.selectbox(
-     'Make',
-     ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
-title = st.text_input('Mileage', 'miles')
-title = st.text_input('Zip code', '#####')
+left_column, middle_column, right_column = st.columns(3)
+with left_column:
+    option = st.selectbox(
+        'Year',
+        ('2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'))
+    title = st.text_input('Mileage', 'miles')
+
+with middle_column:
+    option = st.selectbox(
+        'Model',
+        ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
+    title = st.text_input('Zip code', '#####')
+
+with right_column:
+    option = st.selectbox(
+         'Make',
+        ('Toyota Highlander', 'Toyota RAV4', 'Toyota Corolla', 'Honda CRV', 'Honda Civic'))
+
+right_column.button('Confirm!')
+
+
 st.button('Get price')
+
+with st.spinner('Wait for it...'):
+    time.sleep(5)
+st.success('Done!')
 
 
 with st.echo(code_location='below'):
