@@ -7,5 +7,3 @@ numpy
 scipy
 kaggle
 geopy
-requests
-collections
