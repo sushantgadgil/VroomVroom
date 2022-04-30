@@ -125,8 +125,8 @@ testing = 1
 
 #API Keys
 
-API_Key = "AIzaSyDtX1njxGSrGTU4n3zuATGmc79nVfvMa9c"
-CX = "55e78cedddf23a7dc"
+API_Key = st.secrets("API_Key")
+CX = st.secrets("CX")
 num = "1"
 
 #Build Google Image Search Query
