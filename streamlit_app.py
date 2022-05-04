@@ -29,6 +29,9 @@ In the meantime, below is an example of what you can do with just a few lines of
 
 #Import CSV and Prepare For Display
 
+# Streaming Database
+
+#Leave uncommented to test from Google Drive File
 
 gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
 gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
@@ -42,12 +45,14 @@ def download(path):
 df = download(gDrivepath)
 
 
-#For Sushant's Testing Only
+#Local Cache
 
-# localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv'
+# To test from local cache, uncomment both following lines.
+
+# localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv' #Edit this line with the filepath of the .csv
 # df = pd.read_csv(localPath) #Read in CSV
 
-st.write(df.shape[0])
+#Create Dropdown Menu
 
 makes = df["make_name"]
 
@@ -140,9 +145,9 @@ with right_column.container():
 
 # Implementation of Google Image Search API
 
-testing = 1
+testing = 1 #DO NOT CHANGE UNTIL TESTING IS COMPLETE, WE ONLY HAVE 100 CALLS PER DAY
 
-#API Keys
+#API Keys used for Google Image API
 
 API_Key = st.secrets["API_Key"]
 CX = st.secrets["CX"]
@@ -160,7 +165,7 @@ if testing == 0:
 else:
     q = "2002+Honda+Accord"
 
-#Build the URL
+#Build the Google Search API URL to Retrieve Image
 
 url = "https://customsearch.googleapis.com/customsearch/v1?cx="+CX+"&q="+q+"&searchType=image&num="+num+"&start=1&safe=off&"+"key="+API_Key+"&alt=json"
 
@@ -215,9 +220,4 @@ else: # only for testing
 
 imgurl = searchResult['items'][0]['link']
 
-st.image(imgurl)
-
-
-#
-
-#st.image(img)
+st.image(imgurl) #Use this line to display the image where necessary
