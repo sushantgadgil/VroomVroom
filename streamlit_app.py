@@ -15,6 +15,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import max_error
 from datetime import datetime
+import streamlit.components.v1 as components  # Import Streamlit
 
 st.set_page_config(
      page_title="VroomVroom",
@@ -53,24 +54,24 @@ In the meantime, below is an example of what you can do with just a few lines of
 
 #Leave uncommented to test from Google Drive File
 
-#gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
-#gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
+gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
+gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
 
-#@st.cache(persist=True)
-#def download(path):
-    #gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
-    #df = pd.read_csv('used_cars_dataset_trimmed.csv')
-    #return df
+@st.cache(persist=True)
+def download(path):
+    gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
+    df = pd.read_csv('used_cars_dataset_trimmed.csv')
+    return df
 
-#df = download(gDrivepath)
+df = download(gDrivepath)
 
 
 #Local Cache
 
 # To test from local cache, uncomment both following lines.
 
-localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv' #EDIT this line with the filepath of the .csv to stream locally
-df = pd.read_csv(localPath) #Read in CSV
+#localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv' #EDIT this line with the filepath of the .csv to stream locally
+#df = pd.read_csv(localPath) #Read in CSV
 
 
 #Define Search Algorithm Using Linear regression
