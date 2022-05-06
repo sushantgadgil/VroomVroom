@@ -9,14 +9,22 @@ import geopy.distance as gpd
 import requests
 from geopy.geocoders import Nominatim
 import gdown
+import streamlit.components.v1 as components  # Import Streamlit
 
 st.set_page_config(
      page_title="VroomVroom",
      page_icon="🧊",
-     layout="centered",
+     layout="wide",
      initial_sidebar_state="auto",
      menu_items=None
  )
+
+
+#Render the h1 block, contained in a frame of size 200x200.
+#components.html("<html><banner><h1>Hello, World</h1></body></html>", width=200, height=200)   
+
+with open('Vroom Vroom Wireframe try.html') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 """
 # VroomVroom
