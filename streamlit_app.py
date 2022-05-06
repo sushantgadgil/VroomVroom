@@ -1,6 +1,7 @@
 from collections import namedtuple
 import altair as alt
 import math
+import numpy as np
 import pandas as pd
 import streamlit as st
 import time
@@ -9,14 +10,34 @@ import geopy.distance as gpd
 import requests
 from geopy.geocoders import Nominatim
 import gdown
+import sklearn
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import max_error
+from datetime import datetime
 
 st.set_page_config(
      page_title="VroomVroom",
      page_icon="🧊",
-     layout="centered",
+     layout="wide",
      initial_sidebar_state="auto",
      menu_items=None
  )
+
+
+#Render the h1 block, contained in a frame of size 200x200.
+#components.html("<html><banner><h1>Hello, World</h1></body></html>", width=200, height=200)
+
+#with open('/VroomVroom/a.html') as f:
+#    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+# with st.container():
+#     st.write('Vroom Vroom: Sell Your Car with Data')
+#     st.write('Get Your Price')
+#     st.write('Settings')
+#     st.write('Profile')
+#     st.write('Log Out')
+
 
 """
 # VroomVroom
@@ -26,7 +47,6 @@ Welcome to VroomVroom! Your guide to selling your car, truck or SUV!
 
 In the meantime, below is an example of what you can do with just a few lines of code:
 """
-
 #Import CSV and Prepare For Display
 
 # Streaming Database
@@ -51,6 +71,137 @@ In the meantime, below is an example of what you can do with just a few lines of
 
 localPath = '~/Documents/GitHub/VroomVroom/Dataset/used_cars_dataset_trimmed.csv' #EDIT this line with the filepath of the .csv to stream locally
 df = pd.read_csv(localPath) #Read in CSV
+
+
+#Define Search Algorithm Using Linear regression
+
+#Algorithms by Selected Preference
+#BEST PRICE: make geographic radius bigger by x amount
+#FAST SALE: pull data only from current season
+#NO PREFERENCE: don't expand geographic radius and don't limit seasons
+
+def priceAlgo(searchType, df, year, make, model, mileage, minLat, maxLat, minLong, maxLong):
+    #Append Month as integer to end of dataset
+    df['month']=df['listed_date'].str[5:7].astype(int)
+    if searchType == bestPrice:
+        searchRadius=30
+        maxLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=90)
+        minLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=-90)
+        maxLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=0)
+        minLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=180)
+        maxLong = maxLong[1]
+        minLong = minLong[1]
+        maxLat = maxLat[0]
+        minLat = minLat[0]
+
+        #Filter dataset to region of search
+
+        df_search= df[df['latitude'].between(minLat,maxLat)]
+        df_search= df_search[df_search['longitude'].between(minLong,maxLong)]
+
+        #train and test dataset with linear regression model
+
+        predictors= ['year','make_name','model_name','mileage']
+        X= np.nan_to_num(df_search[predictors].apply(pd.to_numeric,errors='coerce'))
+        y= df_search['price'].apply(pd.to_numeric,errors='coerce')
+        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=0)
+        regressor= LinearRegression()
+        regressor.fit(X_train,y_train)
+
+        #review general model accuracy
+
+        y_pred= regressor.predict(X_test)
+        df_comp= pd.DataFrame({'Actual':y_test,'Predicted':y_pred})
+        #st.write(df_comp)
+        #st.write(max_error(y_test,y_pred))
+
+        #format user inputs
+
+        X_input= np.nan_to_num(pd.DataFrame([year,make,model,mileage]).apply(pd.to_numeric,errors='coerce').transpose())
+        #predict price
+        price = regressor.predict(X_input)
+        return price
+
+    elif searchType == noPref:
+        searchRadius=10
+        maxLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=90)
+        minLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=-90)
+        maxLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=0)
+        minLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=180)
+        maxLong = maxLong[1]
+        minLong = minLong[1]
+        maxLat = maxLat[0]
+        minLat = minLat[0]
+
+        #Filter dataset to region of search
+
+        df_search= df[df['latitude'].between(minLat,maxLat)]
+        df_search= df_search[df_search['longitude'].between(minLong,maxLong)]
+
+        #train and test dataset with linear regression model
+
+        predictors= ['year','make_name','model_name','mileage']
+        X= np.nan_to_num(df_search[predictors].apply(pd.to_numeric,errors='coerce'))
+        y= df_search['price'].apply(pd.to_numeric,errors='coerce')
+        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=0)
+        regressor= LinearRegression()
+        regressor.fit(X_train,y_train)
+
+        #review general model accuracy
+
+        y_pred= regressor.predict(X_test)
+        df_comp= pd.DataFrame({'Actual':y_test,'Predicted':y_pred})
+        #st.write(df_comp)
+        #st.write(max_error(y_test,y_pred))
+
+        #format user inputs
+
+        X_input= np.nan_to_num(pd.DataFrame([year,make,model,mileage]).apply(pd.to_numeric,errors='coerce').transpose())
+        #predict price
+        price = regressor.predict(X_input)
+        return price
+
+    elif searchType == fastSale:
+        currMo= datetime.now().month
+        df=df[currMo <= df['month']]
+        df=df[df['month']<= currMo+2]
+        searchRadius=10
+        maxLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=90)
+        minLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=-90)
+        maxLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=0)
+        minLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=180)
+        maxLong = maxLong[1]
+        minLong = minLong[1]
+        maxLat = maxLat[0]
+        minLat = minLat[0]
+
+        #Filter dataset to region of search
+
+        df_search= df[df['latitude'].between(minLat,maxLat)]
+        df_search= df_search[df_search['longitude'].between(minLong,maxLong)]
+
+        #train and test dataset with linear regression model
+
+        predictors= ['year','make_name','model_name','mileage']
+        X= np.nan_to_num(df_search[predictors].apply(pd.to_numeric,errors='coerce'))
+        y= df_search['price'].apply(pd.to_numeric,errors='coerce')
+        X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,random_state=0)
+        regressor= LinearRegression()
+        regressor.fit(X_train,y_train)
+
+        #review general model accuracy
+
+        y_pred= regressor.predict(X_test)
+        df_comp= pd.DataFrame({'Actual':y_test,'Predicted':y_pred})
+        #st.write(df_comp)
+        #st.write(max_error(y_test,y_pred))
+
+        #format user inputs
+
+        X_input= np.nan_to_num(pd.DataFrame([year,make,model,mileage]).apply(pd.to_numeric,errors='coerce').transpose())
+        #predict price
+        price = regressor.predict(X_input)
+        return price
 
 #Create Dropdown Menu
 
@@ -80,23 +231,25 @@ year = year.values.tolist()
 
 
 #Display Values from Dataset For Search
+with st.form("Your Car"):
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        year = st.selectbox('Year',year)
+        mileage = st.text_input('Mileage', '##,###')
 
-left_column, middle_column, right_column = st.columns(3)
-with left_column:
-    year = st.selectbox(
-        'Year',year)
-    mileage = st.text_input('Mileage', '##,###')
+    with c2:
+        make = st.selectbox('Make', makes)
+        zipCode = st.text_input('Zip code', '#####')
 
-with middle_column:
-    make = st.selectbox(
-        'Make', makes)
-    zipCode = st.text_input('Zip code', '#####')
+    with c3:
+        model = st.selectbox('Model', models)
+        submitted = st.form_submit_button("Confirm!")
 
-with right_column:
-    model = st.selectbox(
-         'Model', models)
-
-right_column.button('Confirm!')
+    if submitted:
+        year = year
+        mileage = mileage
+        zipCode = zipCode
+        model = model
 
 #Data Sanitization
 
@@ -104,11 +257,12 @@ try:
     int(zipCode)
 except ValueError:
     st.write("Enter a Valid Zip Code!")
+    pass
 else:
     if (int(zipCode) > 9999 and int(zipCode) < 100000):
         geolocator = Nominatim(user_agent = "VroomVroom")
         location = geolocator.geocode(zipCode + " United States")
-        searchRadius=10
+        searchRadius=30
         maxLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=90)
         minLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=-90)
         maxLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=0)
@@ -119,27 +273,26 @@ else:
         minLat = minLat[0]
     else:
         st.write("Enter a Valid Zip Code!")
+        pass
 
-with st.spinner('Wait for it...'):
-    time.sleep(0)
-st.success('Done!')
+left_column, middle_column, right_column = st.columns(3)
 
 with left_column.container():
     st.header('Best Price')
     st.write("Sell your car at the best price no matter how long it takes.")
-    st.button('Get Best Price')
+    bestPrice = st.button('Get Best Price')
     # You can call any Streamlit command, including custom components:
 
 with middle_column.container():
     st.header('No Preference')
     st.write("You cannot wait forever, but you can wait for an offer that is right for you.")
-    st.button('Get Price for No Preference')
+    noPref = st.button('Get Price for No Preference')
     # You can call any Streamlit command, including custom components:
 
 with right_column.container():
     st.header('Fast Sale')
     st.write("Sell your car as fast as possible, likely through a dealer or broker.")
-    st.button('Get Fast Sale Price')
+    fastSale = st.button('Get Fast Sale Price')
     # You can call any Streamlit command, including custom components:
 
 
@@ -220,4 +373,87 @@ else: # only for testing
 
 imgurl = searchResult['items'][0]['link']
 
-st.image(imgurl) #Use this line to display the image where necessary
+if bestPrice:
+    c1, c2, c3 = st.columns(3)
+    with c2:
+        st.image(imgurl) #Use this line to display the image where necessary
+
+    c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns(9)
+    with c5:
+        st.write('Is This Your Car?')
+    c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns(9)
+    with c4:
+        correctCar = st.button('Yes')
+    with c6:
+        wrongCar = st.button('No')
+
+
+    if correctCar:
+        searchType = bestPrice
+        c1, c2, c3 = st.columns(3)
+        displayPrice = priceAlgo(bestPrice, df, year, make, model, mileage, minLat, maxLat, minLong, maxLong)
+        with st.spinner('Wait for it...'):
+            time.sleep(1)
+        with c2:
+            st.write(displayPrice)
+
+    elif wrongCar:
+        st.write("Try Again!")
+
+elif noPref:
+    c1, c2, c3 = st.columns(3)
+    with c2:
+        st.image(imgurl) #Use this line to display the image where necessary
+
+    c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns(9)
+    with c5:
+        st.write('Is This Your Car?')
+    c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns(9)
+    with c4:
+        correctCar = st.button('Yes')
+    with c6:
+        wrongCar = st.button('No')
+
+
+    if correctCar:
+        searchType = bestPrice
+        c1, c2, c3 = st.columns(3)
+        displayPrice = priceAlgo(noPref, df, year, make, model, mileage, minLat, maxLat, minLong, maxLong)
+        with st.spinner('Wait for it...'):
+            time.sleep(1)
+        with c2:
+            st.write(displayPrice)
+
+    elif wrongCar:
+        st.write("Try Again!")
+
+
+elif fastSale:
+    c1, c2, c3 = st.columns(3)
+    with c2:
+        st.image(imgurl) #Use this line to display the image where necessary
+
+    c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns(9)
+    with c5:
+        st.write('Is This Your Car?')
+    c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns(9)
+    with c4:
+        correctCar = st.button('Yes')
+    with c6:
+        wrongCar = st.button('No')
+
+
+    if correctCar:
+        searchType = bestPrice
+        c1, c2, c3 = st.columns(3)
+        displayPrice = priceAlgo(fastSale, df, year, make, model, mileage, minLat, maxLat, minLong, maxLong)
+        with st.spinner('Wait for it...'):
+            time.sleep(1)
+        with c2:
+            st.write(displayPrice)
+
+    elif wrongCar:
+        st.write("Try Again!")
+
+displayPrice = priceAlgo(bestPrice, df, year, make, model, mileage, minLat, maxLat, minLong, maxLong)
+st.write(displayPrice)
