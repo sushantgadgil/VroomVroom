@@ -55,8 +55,10 @@ def download(path):
      gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
      df = pd.read_csv('used_cars_dataset_trimmed.csv')
      return df
-
-df = download(gDrivepath)
+#Download to a intermediary variable to improve cache performance.
+carValues = download(gDrivepath)
+#Use df (dataframe) as mutable variable.
+df = carValues
 
 #Read csv from local path 
 #df = pd.read_csv(r'C:\Users\Isabel\Desktop\small_used_car.csv')
