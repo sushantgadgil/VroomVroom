@@ -46,22 +46,22 @@ Welcome to VroomVroom! Your guide to selling your car, truck or SUV!
 
 #Import CSV and Prepare For Display
 # Streaming Database
-#Leave uncommented to test from Google Drive File
+Leave uncommented to test from Google Drive File
 
-# gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
-# gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
+gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
+gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
 
-# @st.cache(persist=True)
-# def download(path):
-#     gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
-#     df = pd.read_csv('used_cars_dataset_trimmed.csv')
-#     return df
+@st.cache(persist=True)
+def download(path):
+     gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
+     df = pd.read_csv('used_cars_dataset_trimmed.csv')
+     return df
 
-# df = download(gDrivepath)
+df = download(gDrivepath)
 
 #Read csv from local path 
 #df = pd.read_csv(r'C:\Users\Isabel\Desktop\small_used_car.csv')
-df = pd.read_csv(r'C:\Users\Isabel\Desktop\used_cars_dataset_trimmed.csv')
+#df = pd.read_csv(r'C:\Users\Isabel\Desktop\used_cars_dataset_trimmed.csv')
 
 #Append Month as integer to end of dataset
 df['month']=df['listed_date'].str[5:7].astype(int)
@@ -256,73 +256,73 @@ if cont:
 
 
 ### Image Testing Block 
-    #testing = 1 #DO NOT CHANGE UNTIL TESTING IS COMPLETE, WE ONLY HAVE 100 CALLS PER DAY
+    testing = 1 #DO NOT CHANGE TO 0 UNTIL TESTING IS COMPLETE, WE ONLY HAVE 100 CALLS PER DAY
 
-    # #API Keys used for Google Image API
-    # API_Key = st.secrets["API_Key"]
-    # CX = st.secrets["CX"]
-    # num = "1"
+    #API Keys used for Google Image API
+    API_Key = st.secrets["API_Key"]
+    CX = st.secrets["CX"]
+    num = "1"
 
-    # #Build Google Image Search Query
-    # makeInput = make.replace(" ", "+")
-    # modelInput = model.replace(" ", "+")
-    # q = str(year) + "+" + makeInput + "+" + modelInput
+    #Build Google Image Search Query
+    makeInput = make.replace(" ", "+")
+    modelInput = model.replace(" ", "+")
+    q = str(year) + "+" + makeInput + "+" + modelInput
 
-    # if testing == 0:
-    #     q = str(year) + make + model
-    # else:
-    #     q = "2002+Honda+Accord"
+    if testing == 0:
+        q = str(year) + make + model
+    else:
+        q = "2002+Honda+Accord"
 
-    # #Build the Google Search API URL to Retrieve Image
-    # url = "https://customsearch.googleapis.com/customsearch/v1?cx="+CX+"&q="+q+"&searchType=image&num="+num+"&start=1&safe=off&"+"key="+API_Key+"&alt=json"
+    #Build the Google Search API URL to Retrieve Image
+    url = "https://customsearch.googleapis.com/customsearch/v1?cx="+CX+"&q="+q+"&searchType=image&num="+num+"&start=1&safe=off&"+"key="+API_Key+"&alt=json"
 
-    # if testing == 0:
-    #     searchHTTP=requests.get(url)
-    #     searchResult = searchHTTP.json()
-    # else: # only for testing
-    #     searchResult={'kind': 'customsearch#search',
-    #  'url': {'type': 'application/json',
-    #   'template': 'https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json'},
-    #  'queries': {'request': [{'title': 'Google Custom Search - 2003 Honda Accord',
-    #     'totalResults': '832000',
-    #     'searchTerms': '2003 Honda Accord',
-    #     'count': 1,
-    #     'startIndex': 1,
-    #     'inputEncoding': 'utf8',
-    #     'outputEncoding': 'utf8',
-    #     'safe': 'off',
-    #     'cx': '55e78cedddf23a7dc',
-    #     'searchType': 'image'}],
-    #   'nextPage': [{'title': 'Google Custom Search - 2003 Honda Accord',
-    #     'totalResults': '832000',
-    #     'searchTerms': '2003 Honda Accord',
-    #     'count': 1,
-    #     'startIndex': 2,
-    #     'inputEncoding': 'utf8',
-    #     'outputEncoding': 'utf8',
-    #     'safe': 'off',
-    #     'cx': '55e78cedddf23a7dc',
-    #     'searchType': 'image'}]},
-    #  'context': {'title': 'Google Image Search'},
-    #  'searchInformation': {'searchTime': 0.149774,
-    #   'formattedSearchTime': '0.15',
-    #   'totalResults': '832000',
-    #   'formattedTotalResults': '832,000'},
-    #  'items': [{'kind': 'customsearch#result',
-    #    'title': 'Used 2003 Honda Accord for Sale Near Me | Edmunds',
-    #    'htmlTitle': 'Used <b>2003 Honda Accord</b> for Sale Near Me | Edmunds',
-    #    'link': 'https://media.ed.edmunds-media.com/for-sale/0d-1hgcm56603a122867/img-1-600x400.jpg',
-    #    'displayLink': 'www.edmunds.com',
-    #    'snippet': 'Used 2003 Honda Accord for Sale Near Me | Edmunds',
-    #    'htmlSnippet': 'Used <b>2003 Honda Accord</b> for Sale Near Me | Edmunds',
-    #    'mime': 'image/jpeg',
-    #    'fileFormat': 'image/jpeg',
-    #    'image': {'contextLink': 'https://www.edmunds.com/honda/accord/2003/',
-    #     'height': 400,
-    #     'width': 600,
-    #     'byteSize': 41524,
-    #     'thumbnailLink': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI2FuckxjFe8pNsPGG1Ie0yAV6M0PCrBIhSrVLN6EkDepJXSjZ3MLKofE&s',
-    #     'thumbnailHeight': 90,
-    #     'thumbnailWidth': 135}}]}
+    if testing == 0:
+        searchHTTP=requests.get(url)
+        searchResult = searchHTTP.json()
+    else: # only for testing
+        searchResult={'kind': 'customsearch#search',
+     'url': {'type': 'application/json',
+      'template': 'https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json'},
+     'queries': {'request': [{'title': 'Google Custom Search - 2003 Honda Accord',
+        'totalResults': '832000',
+        'searchTerms': '2003 Honda Accord',
+        'count': 1,
+        'startIndex': 1,
+        'inputEncoding': 'utf8',
+        'outputEncoding': 'utf8',
+        'safe': 'off',
+        'cx': '55e78cedddf23a7dc',
+        'searchType': 'image'}],
+      'nextPage': [{'title': 'Google Custom Search - 2003 Honda Accord',
+        'totalResults': '832000',
+        'searchTerms': '2003 Honda Accord',
+        'count': 1,
+        'startIndex': 2,
+        'inputEncoding': 'utf8',
+        'outputEncoding': 'utf8',
+        'safe': 'off',
+        'cx': '55e78cedddf23a7dc',
+        'searchType': 'image'}]},
+     'context': {'title': 'Google Image Search'},
+     'searchInformation': {'searchTime': 0.149774,
+      'formattedSearchTime': '0.15',
+      'totalResults': '832000',
+      'formattedTotalResults': '832,000'},
+     'items': [{'kind': 'customsearch#result',
+       'title': 'Used 2003 Honda Accord for Sale Near Me | Edmunds',
+       'htmlTitle': 'Used <b>2003 Honda Accord</b> for Sale Near Me | Edmunds',
+       'link': 'https://media.ed.edmunds-media.com/for-sale/0d-1hgcm56603a122867/img-1-600x400.jpg',
+       'displayLink': 'www.edmunds.com',
+       'snippet': 'Used 2003 Honda Accord for Sale Near Me | Edmunds',
+       'htmlSnippet': 'Used <b>2003 Honda Accord</b> for Sale Near Me | Edmunds',
+       'mime': 'image/jpeg',
+       'fileFormat': 'image/jpeg',
+       'image': {'contextLink': 'https://www.edmunds.com/honda/accord/2003/',
+        'height': 400,
+        'width': 600,
+        'byteSize': 41524,
+        'thumbnailLink': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI2FuckxjFe8pNsPGG1Ie0yAV6M0PCrBIhSrVLN6EkDepJXSjZ3MLKofE&s',
+        'thumbnailHeight': 90,
+        'thumbnailWidth': 135}}]}
 
-    # imgurl = searchResult['items'][0]['link']
+    imgurl = searchResult['items'][0]['link']
