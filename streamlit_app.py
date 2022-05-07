@@ -44,9 +44,8 @@ Welcome to VroomVroom! Your guide to selling your car, truck or SUV!
 
 """
 
-#Import CSV and Prepare For Display
+# Import CSV and Prepare For Display
 # Streaming Database
-Leave uncommented to test from Google Drive File
 
 gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
 gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
