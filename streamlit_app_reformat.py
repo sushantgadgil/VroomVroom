@@ -19,7 +19,7 @@ from datetime import datetime
 st.set_page_config(
      page_title="VroomVroom",
      page_icon="🧊",
-     layout="centered",
+     layout="wide",
      initial_sidebar_state="auto",
      menu_items=None
  )
