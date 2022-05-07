@@ -50,13 +50,15 @@ Welcome to VroomVroom! Your guide to selling your car, truck or SUV!
 gDrivepath = 'https://drive.google.com/file/d/1NeAmUoe9FqYsEAW8vHlRcjlKF_r7b3Ou/view?usp=sharing'
 gDrivepath='https://drive.google.com/uc?id=' + gDrivepath.split('/')[-2]
 
-@st.cache(persist=True)
 def download(path):
      gdown.download(url=path, output='used_cars_dataset_trimmed.csv', quiet=False)
      df = pd.read_csv('used_cars_dataset_trimmed.csv')
      return df
 #Download to a intermediary variable to improve cache performance.
+@st.cache(persist=True)
 carValues = download(gDrivepath)
+
+
 #Use df (dataframe) as mutable variable.
 df = carValues
 
