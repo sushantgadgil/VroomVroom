@@ -162,7 +162,7 @@ if submitted or bestPrice or fastSale or noPref or correctCar or wrongCar:
             st.stop()
 
 ### Image Testing Block
-testing = 1 #DO NOT CHANGE TO 0 UNTIL TESTING IS COMPLETE, WE ONLY HAVE 100 CALLS PER DAY
+testing = 0 #DO NOT CHANGE TO 0 UNTIL TESTING IS COMPLETE, WE ONLY HAVE 100 CALLS PER DAY
 
 #API Keys used for Google Image API
 API_Key = st.secrets["API_Key"]
