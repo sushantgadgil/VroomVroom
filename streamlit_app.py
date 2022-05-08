@@ -27,8 +27,8 @@ st.set_page_config(
 #Render the h1 block, contained in a frame of size 200x200.
 #components.html("<html><banner><h1>Hello, World</h1></body></html>", width=200, height=200)
 
-#with open('Vroom Vroom Wireframe try3.html') as f:
-#    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+with open('Vroom Vroom Wireframe try3.html') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # with st.container():
 #     st.write('Vroom Vroom: Sell Your Car with Data')
