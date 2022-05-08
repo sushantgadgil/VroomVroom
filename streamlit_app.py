@@ -112,6 +112,55 @@ with st.form("Your Car"):
         submitted = st.form_submit_button("Confirm!")
 
 
+#define future buttons as empty
+bestPrice= st.empty
+fastSale= st.empty
+noPref= st.empty
+correctCar= st.empty
+wrongCar= st.empty
+
+cont= 0
+if submitted or bestPrice or fastSale or noPref or correctCar or wrongCar:
+    year = year
+    mileage = mileage
+    zipCode = zipCode
+    model = model
+
+    #Confirm make and model is a valid entry
+    validateData = df
+    validateData = validateData[validateData['make_name'].isin([make])]
+    validateData = validateData[validateData['model_name'].isin([model])]
+    inputSize = validateData.shape[0]
+
+    if inputSize < 5:
+        st.warning('Not enough data, please try another vehicle')
+        st.stop()
+
+    #Get geographic location from zipcode
+    try:
+        int(zipCode)
+    except ValueError:
+        st.warning("Enter a Valid Zip Code!")
+        st.stop()
+    else:
+        if (int(zipCode) > 9999 and int(zipCode) < 100000):
+            geolocator = Nominatim(user_agent = "VroomVroom")
+            location = geolocator.geocode(zipCode + " United States")
+            searchRadius=30
+            maxLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=90)
+            minLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=-90)
+            maxLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=0)
+            minLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=180)
+            maxLong = maxLong[1]
+            minLong = minLong[1]
+            maxLat = maxLat[0]
+            minLat = minLat[0]
+            #continue with preference selection
+            cont= 1
+        else:
+            st.warning("Enter a Valid Zip Code!")
+            st.stop()
+
 ### Image Testing Block
 testing = 1 #DO NOT CHANGE TO 0 UNTIL TESTING IS COMPLETE, WE ONLY HAVE 100 CALLS PER DAY
 
@@ -184,53 +233,6 @@ else: # only for testing
 
 imgurl = searchResult['items'][0]['link']
 
-#define future buttons as empty
-bestPrice= st.empty
-fastSale= st.empty
-noPref= st.empty
-correctCar= st.empty
-wrongCar= st.empty
-
-cont= 0
-if submitted or bestPrice or fastSale or noPref or correctCar or wrongCar:
-    year = year
-    mileage = mileage
-    zipCode = zipCode
-    model = model
-
-    #Confirm make and model is a valid entry
-    validateData = df
-    validateData = validateData[validateData['make_name'].isin([make])]
-    validateData = validateData[validateData['model_name'].isin([model])]
-    inputSize = validateData.shape[0]
-
-    if inputSize < 5:
-        st.warning('Not enough data, please try another vehicle')
-        st.stop()
-
-    #Get geographic location from zipcode
-    try:
-        int(zipCode)
-    except ValueError:
-        st.write("Enter a Valid Zip Code!")
-    else:
-        if (int(zipCode) > 9999 and int(zipCode) < 100000):
-            geolocator = Nominatim(user_agent = "VroomVroom")
-            location = geolocator.geocode(zipCode + " United States")
-            searchRadius=30
-            maxLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=90)
-            minLong = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=-90)
-            maxLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=0)
-            minLat = gpd.distance(miles=searchRadius).destination((location.latitude, location.longitude), bearing=180)
-            maxLong = maxLong[1]
-            minLong = minLong[1]
-            maxLat = maxLat[0]
-            minLat = minLat[0]
-            #continue with preference selection
-            cont= 1
-        else:
-            st.write("Enter a Valid Zip Code!")
-
 #If valid data input
 imageCheck= st.empty()
 if cont:
@@ -255,7 +257,7 @@ if cont:
         if correctCar:
             selectPref= 1
         elif wrongCar:
-            st.write("Oops! Double check the info you gave us. We don't recognize your vehicle.")
+            st.warning("Oops! Double check the info you gave us. We don't recognize your vehicle.")
 
     pred= 0
     #these or statements are necessary to remember button history
