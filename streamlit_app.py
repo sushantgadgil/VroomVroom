@@ -27,8 +27,8 @@ st.set_page_config(
 #Render the h1 block, contained in a frame of size 200x200.
 #components.html("<html><banner><h1>Hello, World</h1></body></html>", width=200, height=200)
 
-with open('Vroom Vroom Wireframe try3.html') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+#with open('Vroom Vroom Wireframe try3.html') as f:
+#    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 # with st.container():
 #     st.write('Vroom Vroom: Sell Your Car with Data')
@@ -319,12 +319,23 @@ if cont:
 
             #Predict suggested listing price
             sugg_price= predictSale(X,'price',X_input)
+            sugg_price = np.round(sugg_price,decimals=1)
+            sugg_price = "{:,.2f}".format(sugg_price)
+
 
             #Predict suggested listing month
             sugg_month= predictSale(X,'month',X_input)
+            months_in_year = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+            sugg_month = months_in_year[int(sugg_month-1)]
 
              #Post results
             c1, c2, c3 = st.columns(3)
             with c2:
-                st.write("Suggested Listing Price: $"+ str(np.round(sugg_price,decimals=0)))
-                st.write("Suggested Listing Month of Year: "+ str(np.round(sugg_month,decimals=0)))
+                if bestPrice:
+                    st.subheader("Your Best Price")
+                elif noPref:
+                    st.subheader("No Preference Price")
+                elif fastSale:
+                    st.subheader("Fastest Sale Price")
+                st.subheader("Suggested Listing Price: $"+ sugg_price)
+                st.subheader("Suggested Listing Month of Year: "+ str(sugg_month))
